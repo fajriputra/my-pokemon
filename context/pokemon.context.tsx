@@ -36,6 +36,7 @@ const GlobalContext = createContext<{
   dispatch: Dispatch<Action>;
   allPokemonData: Array<IPokemonAllData>;
   next: () => Promise<void>;
+  getPokemonDetail: (name: string) => Promise<void>;
   onAddFavorite: (pokemon: IPokemonAllData) => void;
   onDeleteFavorite: (pokemon: IPokemonAllData) => void;
 } | null>(null);
@@ -137,6 +138,14 @@ export const GlobalProvider = (props: IGlobalProviderProps) => {
     setAllPokemonData(allPokemonData);
   };
 
+  const getPokemonDetail = async (name: string) => {
+    dispatch({ type: LOADING });
+
+    const res = await fetch(`${baseUrl}pokemon/${name}`);
+    const data = await res.json();
+    dispatch({ type: GET_POKEMON, payload: data });
+  };
+
   const getPokemonTypes = async () => {
     dispatch({ type: "LOADING" });
 
@@ -182,6 +191,7 @@ export const GlobalProvider = (props: IGlobalProviderProps) => {
         state,
         dispatch,
         allPokemonData,
+        getPokemonDetail,
         next,
         onAddFavorite,
         onDeleteFavorite,
