@@ -22,11 +22,11 @@ export async function generateMetadata({
   };
 }
 
-const PokemonDetailPage = async ({
+export async function PokemonDetailPage({
   params: { name },
 }: {
   params: { name: string };
-}) => {
+}) {
   const pokemon = await getPokemon(name);
 
   let front_default = "";
@@ -164,6 +164,4 @@ const PokemonDetailPage = async ({
       </div>
     </div>
   );
-};
-
-export default PokemonDetailPage;
+}

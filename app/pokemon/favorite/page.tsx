@@ -8,8 +8,6 @@ export const metadata: Metadata = {
     "Discover and manage your favorite Pokémon with detailed stats, evolutions, and abilities. Keep track of your top picks in the Pokémon universe.",
 };
 
-const FavoritePage = () => {
+export default function FavoritePage() {
   return <FavoriteWrapper />;
-};
-
-export default FavoritePage;
+}
