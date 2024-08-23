@@ -20,6 +20,7 @@ interface State {
   allPokemon: Pokemon[];
   types: Pokemon[];
   pokemon: Partial<IPokemonAllData>;
+  favorites: Array<IPokemonAllData>;
   next: string;
   loading: boolean;
 }
@@ -35,6 +36,8 @@ const GlobalContext = createContext<{
   dispatch: Dispatch<Action>;
   allPokemonData: Array<IPokemonAllData>;
   next: () => Promise<void>;
+  onAddFavorite: (pokemon: IPokemonAllData) => void;
+  onDeleteFavorite: (pokemon: IPokemonAllData) => void;
 } | null>(null);
 
 // Actions
@@ -43,6 +46,8 @@ const GET_ALL_POKEMON = "GET_ALL_POKEMON";
 const GET_ALL_TYPES = "GET_ALL_TYPES";
 const GET_POKEMON = "GET_POKEMON";
 const NEXT = "NEXT";
+const ADD_FAVORITE = "ADD_FAVORITE";
+const DELETE_FAVORITE = "DELETE_FAVORITE";
 
 // Reducer with typed state and actions
 const reducer = (state: State, action: Action): State => {
@@ -76,6 +81,20 @@ const reducer = (state: State, action: Action): State => {
         loading: false,
       };
 
+    case ADD_FAVORITE:
+      return {
+        ...state,
+        favorites: [...state.favorites, action.payload],
+      };
+
+    case DELETE_FAVORITE:
+      return {
+        ...state,
+        favorites: state.favorites.filter(
+          (pokemon) => pokemon.id !== action.payload.id
+        ),
+      };
+
     default:
       return state;
   }
@@ -92,6 +111,7 @@ export const GlobalProvider = (props: IGlobalProviderProps) => {
     allPokemon: [],
     pokemon: {},
     types: [],
+    favorites: [],
     next: "",
     loading: false,
   };
@@ -143,6 +163,14 @@ export const GlobalProvider = (props: IGlobalProviderProps) => {
     setAllPokemonData([...allPokemonData, ...newPokemonData]);
   };
 
+  const onAddFavorite = (pokemon: IPokemonAllData) => {
+    dispatch({ type: ADD_FAVORITE, payload: pokemon });
+  };
+
+  const onDeleteFavorite = (pokemon: IPokemonAllData) => {
+    dispatch({ type: DELETE_FAVORITE, payload: pokemon });
+  };
+
   useEffect(() => {
     getPokemonTypes();
     allPokemon();
@@ -155,6 +183,8 @@ export const GlobalProvider = (props: IGlobalProviderProps) => {
         dispatch,
         allPokemonData,
         next,
+        onAddFavorite,
+        onDeleteFavorite,
       }}
     >
       {props.children}

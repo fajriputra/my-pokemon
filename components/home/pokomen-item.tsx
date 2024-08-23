@@ -1,11 +1,16 @@
 import React from "react";
 
 import Image from "next/image";
-import Link from "next/link";
+
+import { MdFavorite } from "react-icons/md";
+import { BsBoxArrowInUpRight } from "react-icons/bs";
 
 interface IPokemonItemProps {
   image_url: string;
   name: string;
+  onFavorite?: () => void;
+  onDetail?: () => void;
+  isFavorite?: boolean;
 }
 
 const PokemonItem = (props: IPokemonItemProps) => {
@@ -27,12 +32,18 @@ const PokemonItem = (props: IPokemonItemProps) => {
       </div>
       <div className="h-[200px] bg-neutral-50 flex flex-col justify-between p-4 rounded-br-xl rounded-bl-xl">
         <h3 className="text-[1.4rem] text-[#333] capitalize">{props.name}</h3>
-        <Link
-          href={`/pokemon/${props.name}`}
-          className="text-[#7263f3] font-medium text-[1.1rem] opacity-[0.68]"
-        >
-          More Details &nbsp; &rarr;
-        </Link>
+        <div className="flex items-center gap-x-4">
+          <MdFavorite
+            size={24}
+            color={props.isFavorite ? "red" : "#d8d8d8"}
+            onClick={props.onFavorite}
+          />
+          <BsBoxArrowInUpRight
+            size={24}
+            color="#7263f3"
+            onClick={props.onDetail}
+          />
+        </div>
       </div>
     </div>
   );

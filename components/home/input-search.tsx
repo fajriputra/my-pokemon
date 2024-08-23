@@ -1,7 +1,8 @@
-import { useDebounceFn } from "ahooks";
 import { useState } from "react";
 
-interface IInputSearchProps {
+import { useDebounceFn } from "ahooks";
+
+export interface IInputSearchProps {
   onChangeSearch: (v: string) => void;
 }
 

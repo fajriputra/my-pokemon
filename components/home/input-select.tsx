@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-interface IInputSelectProps {
+export interface IInputSelectProps {
   types: Array<{ name: string; url: string }>;
   onChangeSelect: (v: string) => void;
 }
