@@ -1,36 +1,21 @@
+"use client";
+
+import { useGlobalContext } from "@/context/pokemon.context";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 
-export async function getPokemon(name: string) {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-  const data = await res.json();
-  return data;
-}
-
-export async function generateMetadata({
+export default function PokemonDetailPage({
   params: { name },
 }: {
   params: { name: string };
 }) {
-  const pokemon = await getPokemon(name);
-
-  return {
-    title: `Pokémon: ${pokemon.name}`,
-    description: `Learn more about ${pokemon.name} and its stats, abilities, and evolutions.`,
-  };
-}
-
-export async function PokemonDetailPage({
-  params: { name },
-}: {
-  params: { name: string };
-}) {
-  const pokemon = await getPokemon(name);
+  const { state, getPokemonDetail } = useGlobalContext();
 
   let front_default = "";
 
-  if (pokemon?.sprites?.other) {
-    const { "official-artwork": link } = pokemon?.sprites?.other;
+  if (state.pokemon?.sprites?.other) {
+    const { "official-artwork": link } = state.pokemon?.sprites?.other;
     front_default = link.front_default;
   }
 
@@ -54,6 +39,10 @@ export async function PokemonDetailPage({
 
   const randomColor = pkColors[Math.floor(Math.random() * pkColors.length)];
 
+  useEffect(() => {
+    if (name) getPokemonDetail(name);
+  }, [name]);
+
   return (
     <div className="flex flex-col justify-center gap-y-10">
       <div className="flex gap-x-4 items-center px-6">
@@ -61,7 +50,7 @@ export async function PokemonDetailPage({
           Back
         </Link>
         <h2 className="text-lg font-semibold capitalize text-[#333]">
-          Detail of Pokemon {pokemon?.name}
+          Detail of Pokemon {state.pokemon?.name}
         </h2>
       </div>
       <div
@@ -73,11 +62,11 @@ export async function PokemonDetailPage({
         <div className="relative flex flex-col justify-center gap-y-6 h-[380px]">
           <Image
             src={
-              pokemon?.sprites?.other?.home.front_default
-                ? pokemon?.sprites?.other?.home.front_default
+              state.pokemon?.sprites?.other?.home.front_default
+                ? state.pokemon?.sprites?.other?.home.front_default
                 : front_default
             }
-            alt={pokemon.name}
+            alt={state.pokemon?.name || ""}
             width={0}
             height={0}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -87,19 +76,19 @@ export async function PokemonDetailPage({
         </div>
         <div className="px-12 py-10">
           <h2 className="text-[2.5rem] font-semibold capitalize text-white mb-4 px-0 py-2">
-            {pokemon?.name}
+            {state.pokemon?.name}
           </h2>
           <div className="flex flex-col gap-4">
             <div className="flex items-center flex-wrap gap-2">
               <h5 className="text-[1.2rem] font-semibold text-white">Name:</h5>
               <p className="text-[1.2rem] font-medium text-[#333]">
-                {pokemon?.name},
+                {state.pokemon?.name},
               </p>
             </div>
 
             <div className="flex items-center flex-wrap gap-2">
               <h5 className="text-[1.2rem] font-semibold text-white">Type:</h5>
-              {pokemon?.types?.map((type: any) => (
+              {state.pokemon?.types?.map((type: any) => (
                 <p
                   className="text-[1.2rem] font-medium text-[#333]"
                   key={type.type.name}
@@ -114,7 +103,7 @@ export async function PokemonDetailPage({
                 Height:
               </h5>
               <p className="text-[1.2rem] font-medium text-[#333]">
-                {pokemon?.height}
+                {state.pokemon?.height}
               </p>
             </div>
 
@@ -122,7 +111,7 @@ export async function PokemonDetailPage({
               <h5 className="text-[1.2rem] font-semibold text-white">
                 Abilities:
               </h5>
-              {pokemon?.abilities?.map((ability: any) => (
+              {state.pokemon?.abilities?.map((ability: any) => (
                 <p
                   className="text-[1.2rem] font-medium text-[#333]"
                   key={ability.ability.name}
@@ -134,7 +123,7 @@ export async function PokemonDetailPage({
 
             <div className="flex items-center flex-wrap gap-2">
               <h5 className="text-[1.2rem] font-semibold text-white">Stats:</h5>
-              {pokemon?.stats?.map((stat: any) => (
+              {state.pokemon?.stats?.map((stat: any) => (
                 <p
                   className="text-[1.2rem] font-medium text-[#333]"
                   key={stat.stat.name}
@@ -148,7 +137,7 @@ export async function PokemonDetailPage({
               <h5 className="text-[1.2rem] font-semibold text-white">
                 A few moves:
               </h5>
-              {pokemon?.moves?.slice(0, 3).map((move: any) => (
+              {state.pokemon?.moves?.slice(0, 3).map((move: any) => (
                 <p
                   className="text-[1.2rem] font-medium text-[#333]"
                   key={move.move.name}
